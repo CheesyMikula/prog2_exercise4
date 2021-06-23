@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Controller {
 
-	public static final String APIKEY = "0038b5ccc1124e94b01d19b0d5982697";  //0038b5ccc1124e94b01d19b0d5982697
+	public static final String APIKEY = "86dcf794e270499bb21c916e440fb2f6";  //0038b5ccc1124e94b01d19b0d5982697
 
 	private List<Article> articles = null;
 
@@ -28,6 +28,8 @@ public class Controller {
 		return getArticlesPrintReady();
 	}
 
+
+
 	public List<Article> getArticles(NewsApi newsApi) throws NewsAPIException {
 		NewsResponse newsResponse = newsApi.getNews();
 
@@ -37,6 +39,23 @@ public class Controller {
 		
 		return newsResponse.getArticles();
 	}
+
+
+	public List<String> getListOfArticleURLs() throws NewsAPIException {
+
+		if(articles == null){
+			throw new NewsAPIException("Load articles first");
+		}
+
+		List<String> imageURLsList = articles.stream().map(Article::getUrlToImage).collect(Collectors.toList());
+		List<String> URLlist = articles.stream().map(Article::getUrl).collect(Collectors.toList());
+
+		URLlist.addAll(imageURLsList);
+		return URLlist;
+	}
+
+
+
 
 	private String getArticlesPrintReady() {
 		return articles.stream()

@@ -1,9 +1,7 @@
 package at.ac.fhcampuswien.newsanalyzer.downloader;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -27,21 +25,25 @@ public abstract class Downloader {
             if (fileName.isEmpty()) {
                 fileName = url4download.getHost() + HTML_EXTENTION;
             }
+
             os = new FileOutputStream(DIRECTORY_DOWNLOAD + fileName);
+
+
 
             byte[] b = new byte[2048];
             int length;
             while ((length = is.read(b)) != -1) {
                 os.write(b, 0, length);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | NullPointerException e) {
+            System.out.println("Download not working");
         } finally {
             try {
                 Objects.requireNonNull(is).close();
                 Objects.requireNonNull(os).close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException | NullPointerException e) {
+                System.out.println("Could not close OS or IS");
+
             }
         }
         return fileName;

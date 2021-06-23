@@ -3,6 +3,9 @@ package at.ac.fhcampuswien.newsanalyzer.ui;
 
 import at.ac.fhcampuswien.newsanalyzer.ctrl.Controller;
 import at.ac.fhcampuswien.newsanalyzer.ctrl.NewsAPIException;
+import at.ac.fhcampuswien.newsanalyzer.downloader.Downloader;
+import at.ac.fhcampuswien.newsanalyzer.downloader.ParallelDownloader;
+import at.ac.fhcampuswien.newsanalyzer.downloader.SequentialDownloader;
 import at.ac.fhcampuswien.newsapi.NewsApi;
 import at.ac.fhcampuswien.newsapi.NewsApiBuilder;
 import at.ac.fhcampuswien.newsapi.enums.Country;
@@ -11,10 +14,13 @@ import at.ac.fhcampuswien.newsapi.enums.Endpoint;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class UserInterface {
 
 	private Controller ctrl = new Controller();
+	private Downloader sequentialDownloader = new SequentialDownloader();
+	private Downloader parallelDownloader = new ParallelDownloader();
 
 	public void getDataForCustomInput() {
 		System.out.println("Enter search query:");
@@ -49,6 +55,17 @@ public class UserInterface {
 		menu.insert("z", "Sort by longest title", this::getSortArticlesByLongestTitle); // Exercise 3
 		menu.insert("g", "Download URLs", () -> {
 			//Todo
+			try {
+				System.out.println(ctrl.getListOfArticleURLs());
+				//System.out.println("seq download start");
+				//sequentialDownloader.process(ctrl.getListOfArticleURLs());
+				//System.out.println("seq download end");
+				System.out.println("parallel download start");
+				parallelDownloader.process(ctrl.getListOfArticleURLs());
+				System.out.println("parallel download end");
+			} catch (NewsAPIException e) {
+				System.out.println("Please load Articles first");
+			}
 		});
 		menu.insert("q", "Quit", null);
 		Runnable choice;
